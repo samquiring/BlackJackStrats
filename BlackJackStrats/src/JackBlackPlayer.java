@@ -1,10 +1,12 @@
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+//TODO: prevent player from going negitive in money
 public class JackBlackPlayer {
 	
 	private List<Integer> currHand;
 	private List<Integer> dealerHand;
+	private List<Integer> cardsPlayed;
 	private int shuffleType;
 	private Scanner myScanner;
 	private boolean playsGame;
@@ -14,29 +16,33 @@ public class JackBlackPlayer {
 	private int altHandTotal;
 	private int endDealerTotal;
 	private int endUserTotal;
+	private int deckSize;
 	boolean isUser;
 	
 	
 	//Initializes the game of blackJack
 	//Pass in an integer of how much money the user 
 	//will start with
-	public JackBlackPlayer(int startingAmount) {
+	public JackBlackPlayer(int startingAmount, int startingBet) {
 		money = startingAmount;
 		handTotal = 0;
+		//TODO: figure out best way to ask user for deckSize
+		deckSize = 1;
 		isUser = true;
 		altHandTotal = 0;
-		bet = 100;
+		bet = startingBet;
 		endDealerTotal = 0;
 		endUserTotal = 0;
 		currHand = new ArrayList<Integer>();
 		dealerHand = new ArrayList<Integer>();
+		cardsPlayed = new ArrayList<Integer>();
 		myScanner = new Scanner(System.in);
 		shuffleType = this.shuffleType();
 		this.setPlaysGame();
 	}
 	
 	//lets the user set the betSize between each hand
-	//TODO: protect the user from changing betsize mid hand
+	//TODO: protect the user from changing bet size mid hand
 	public void setBet(int betSize) {
 		bet = betSize;
 	}	
@@ -63,7 +69,11 @@ public class JackBlackPlayer {
 	//TODO: create auto shuffle deck and create hand shuffled deck
 	private int shuffleType() {
 		System.out.println("What type of shuffling do you want?");
-		System.out.println("1 = autoShuffle");
+		System.out.println("1 = autoShuffle - simulates infinte decks so equal probability of any card");
+		System.out.println("2 = handShuffled - simulates playing till end of all decks in play."
+				+ "So each hand has a different probability");
+		System.out.println("3 = AutoShuffler - simulates an autoShuffler."
+				+ " So each hand the deck(s) is reshuffled");
 		int shuffle;
 		//TODO: error trap for numbers that aren't tied to shuffleTypes
 		shuffle = myScanner.nextInt();
@@ -84,7 +94,6 @@ public class JackBlackPlayer {
 			playsGame = false;
 		}
 	}
-	
 	//simulates a deck that is perfectly shuffled every hand i.e true randomness
 	private int autoShuffle() {
 		int min = 2;
@@ -95,15 +104,63 @@ public class JackBlackPlayer {
 		
 	}
 	
+	//Simulates a deck that is shuffled then played until no cards are left then shuffled
+	private int shuffledDeck() {
+		
+		int min = 0;
+		//creates a possible card from 0 to the deck max
+		int max = 51 * deckSize;
+		int randomNumb = ThreadLocalRandom.current().nextInt(min, max + 1);
+		//"shuffles" the deck after all cards have been picked
+		if(!cardsPlayed.isEmpty() && cardsPlayed.size() == 52) {
+			cardsPlayed.clear();
+		}
+		//keeps running until it gets a randomNumb that hasn't been played
+		while(!cardsPlayed.isEmpty() && cardsPlayed.contains(randomNumb)) {
+			randomNumb = ThreadLocalRandom.current().nextInt(min, max + 1);
+		}
+		cardsPlayed.add(randomNumb);
+		return(randomNumb/(4*deckSize) + 2);
+	}
+	
+	//simulates an autoShuffler at a Casino
+	//or a person shuffling after every hand
+	private int autoShufflerDeck() {
+		int min = 0;
+		//creates a possible card from 0 to the deck max
+		int max = 51 * deckSize;
+		int randomNumb = ThreadLocalRandom.current().nextInt(min, max + 1);
+		
+		//Checks if it is the beginning of the hand by seeing if userHand is empty
+		//if so it removes all cardsPlayed making all hands possible agian
+		if(!cardsPlayed.isEmpty() && currHand.isEmpty()) {
+			cardsPlayed.clear();
+		}
+		//keeps running until it gets a randomNumb that hasn't been played
+		while(!cardsPlayed.isEmpty() && cardsPlayed.contains(randomNumb)) {
+			randomNumb = ThreadLocalRandom.current().nextInt(min, max + 1);
+		}
+		cardsPlayed.add(randomNumb);
+		return(randomNumb/(4*deckSize) + 2);
+	}
+	
 	//This gives the player or dealer a random card based on the shuffle type
 	public void hit(boolean isUser) {
 		if(isUser) {
 			if(shuffleType == 1) {
 				currHand.add(autoShuffle());
+			} else if(shuffleType == 2) {
+				currHand.add(shuffledDeck());
+			} else if(shuffleType == 3) {
+				currHand.add(autoShufflerDeck());
 			}
 		} else {
 			if(shuffleType == 1) {
 				dealerHand.add(autoShuffle());
+			} else if(shuffleType == 2) {
+				dealerHand.add(shuffledDeck());
+			} else if(shuffleType == 3) {
+				dealerHand.add(autoShufflerDeck());
 			}
 		}
 	}
@@ -150,6 +207,9 @@ public class JackBlackPlayer {
 		}
 		handTotal = count;
 		altHandTotal += count;
+		if(altHandTotal > 21) {
+			altHandTotal = handTotal;
+		}
 		
 	}
 	//prints the current total of your hand
@@ -199,8 +259,8 @@ public class JackBlackPlayer {
 	//sets the user total at the end of the game
 	//based off the current user total and alt total
 	private void setEndUserTotal() {
-		if(handTotal > 21) {
-			endUserTotal = altHandTotal;
+		if(altHandTotal > 21) {
+			endUserTotal = handTotal;
 		} else if(handTotal < altHandTotal){
 			endUserTotal = altHandTotal;
 		} else {
