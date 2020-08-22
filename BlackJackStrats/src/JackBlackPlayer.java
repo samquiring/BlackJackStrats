@@ -63,6 +63,35 @@ public class JackBlackPlayer {
 		return money;
 	}
 	
+	//shows the dealers second card so the player can bet accordingly
+	//returns an int(this is for the computer to read)
+	public int getDealerCardInt() {
+		if(!dealerHand.isEmpty()) {
+			return dealerHand.get(1);
+		}
+		return null;
+	}
+	//shows the dealers second card so the player can bet accordingly
+	//returns a string for the user to look at
+	public String getDealerCardStr() {
+		if(!dealerHand.isEmpty()) {
+			if(dealerHand.get(1) > 10) {
+				if(dealerHand.get(1) == 11) {
+					return ("Jack");
+				} else if(dealerHand.get(1) == 12) {
+					return ("Queen");
+				} else if(dealerHand.get(1) == 13) {
+					return ("King");
+				} else{
+					return ("Ace");
+				}
+			} else {
+				return String.valueOf(dealerHand.get(1));
+			}
+		}
+		return null;
+	}
+	
 	//prompts the user to choose what type of shuffling that it wants to use
 	//Currently fully random is available which simulates a game with
 	//infinite decks 
@@ -304,6 +333,7 @@ public class JackBlackPlayer {
 		}
 		System.out.println("the dealer had: " + getCurrHand(dealerHand));
 	}
+	
 	//for if the user is playing a single game	
 	public void userPlaying() {
 		System.out.println("Your current Total is: $" + money);
@@ -312,6 +342,7 @@ public class JackBlackPlayer {
 		System.out.println("Your starting cards are: ");
 		System.out.println(getCurrHand(currHand));
 		printTotal();
+		System.out.println("The Dealer is showing a(n) " + getDealerCardStr());
 		while(handTotal < 21) {
 			System.out.println("Would you like to hit? y/n");
 			String answer = myScanner.nextLine();
