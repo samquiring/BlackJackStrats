@@ -1,8 +1,8 @@
 
 public class Strats {
-	public int betSize = 100;
-	public int startingBet = 100;
-	public int startingMoney;
+	private int betSize;
+	private int startingBet;
+	private int startingMoney;
 	public JackBlackPlayer cardGame;
 	
 	//Initializes the Strats object
@@ -13,6 +13,22 @@ public class Strats {
 		startingBet = bet;
 		startingMoney = money;
 		cardGame = new JackBlackPlayer(startingMoney, startingBet);
+	}
+	
+	public int getBetSize() {
+		return betSize;
+	}
+	
+	public int getStartingBet() {
+		return startingBet;
+	}
+	
+	public int getStartingMoney() {
+		return startingMoney;
+	}
+	
+	public void setBetSize(int bet) {
+		betSize = bet;
 	}
 	
 	//Call this for the user to play a game manually
