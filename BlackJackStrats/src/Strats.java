@@ -1,3 +1,13 @@
+//Created by Sam Quiring
+
+//A class that implements basic strategies of playing a betting to automate a game of blackAJack
+//The betting strategies are: same bet each round, Martingale, and card counting
+//The playing strategies are: basic chart betting(look up a basic table of when to bet)
+//This class has a method Strats that initializes the betSize, startingBet, decksInPlay
+//current count for card weight, and a blackjackPlayer object cardGame
+//The methods in this class are getBetSize, getStartingBet, getStartingMoney, setBetSize,
+//userPlays which allows the user to play a game manually
+//and autoRounds which automates a game with a giving strategy
 import java.util.*;
 public class Strats {
 	private int betSize;
@@ -44,7 +54,7 @@ public class Strats {
 	
 	//This is the Strat where you double your bet.
 	//It is not dependent on ShuffleType
-	public void autoMartigale() { 
+	private void autoMartigale() { 
 		int holder = cardGame.compareUser();
 		if(holder > 0) {
 			betSize = startingBet;
@@ -61,7 +71,7 @@ public class Strats {
 	//times the weight of the deck and a decreaseVal. That decreases the deck
 	//by the times of the weight of the deck. 
 	//the weight of the deck is also divided by the amount of decks in play
-	public void weightedDeckBet(int increaseVal, int decreaseVal) {
+	private void weightedDeckBet(int increaseVal, int decreaseVal) {
 		findWeightedDeck();
 		if(currWeight > 0) {
 			betSize = (currWeight*increaseVal + startingBet);

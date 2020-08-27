@@ -1,4 +1,5 @@
 
+//Just a tester class that runs the other classes
 public class BlackJackTester {
 
 	public static void main(String args[]) {

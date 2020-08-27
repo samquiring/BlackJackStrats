@@ -1,7 +1,15 @@
+//Created by Sam Quiring
+
+//This class BlackJackPlayer creates an object that can do all the basic things that a person can do in blackjack
+//You can setBet, start a new game with newGame, play in three different shuffling styles with a user specified
+//amount of decks, get a starting hand with startingHand, view the dealers face up card with getDealearCards(str or int),
+//view the users hand with getCurrHand, hit with hit, play a single game manually with userPlaying, and find out who won
+//at the end of a round with whoWon
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-//TODO: prevent player from going negitive in money
+//TODO: prevent player from going negative in money
 public class BlackJackPlayer {
 	
 	private List<Integer> currHand;
@@ -25,7 +33,11 @@ public class BlackJackPlayer {
 	
 	//Initializes the game of blackJack
 	//Pass in an integer of how much money the user 
-	//will start with
+	//will start with, an int of the startingBet value,
+	//and an int of the amount of decks in play
+	//Initializes the startingmoney, handTotal, deckSize,
+	//betSize,current user hand, dealer hand, cards played so far,
+	//the type of shuffle, the end of round, and if the user is playing manually
 	public BlackJackPlayer(int startingAmount, int startingBet, int deckSizeSet) {
 		money = startingAmount;
 		handTotal = 0;
@@ -63,17 +75,21 @@ public class BlackJackPlayer {
 		endRound = false;
 	}
 	
+	//returns the users current bet value
 	public int getBet() {
 		return bet;
 	}
+	
 	//returns the amount of money the user has left
 	public int getMoney() {
 		return money;
 	}
 	
+	//returns true if the deck has been shuffled inbetween rounds
 	public boolean getDeckShuffled() {
 		return deckShuffled;
 	}
+	
 	//shows the dealers second card so the player can bet accordingly
 	//returns an int(this is for the computer to read)
 	public int getDealerCardInt() {
@@ -249,6 +265,7 @@ public class BlackJackPlayer {
 		return holder;
 	}
 	
+	//returns a list of integers that represents the user's hand
 	public List<Integer> getUserHand() {
 		return currHand;
 	}
@@ -279,6 +296,7 @@ public class BlackJackPlayer {
 		}
 		
 	}
+	
 	//prints the current total of your hand
 	public int printTotal() {
 		System.out.println("Your current total is: ");
@@ -295,6 +313,8 @@ public class BlackJackPlayer {
 		}
 		return handTotal;
 	}
+	
+	//gives the user and dealer their starting hand
 	public void startingHand() {
 		hit(IS_USER);
 		hit(!IS_USER);
@@ -337,6 +357,7 @@ public class BlackJackPlayer {
 			endUserTotal = handTotal;
 		}
 	}
+	
 	//Dealer hits until 17 and Ace always counts as 11
 	//unless it busts the hand
 	private void dealerHit() {
