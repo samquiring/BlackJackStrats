@@ -29,18 +29,23 @@ public class Strats {
 		cardGame = new BlackJackPlayer(startingMoney, startingBet, decksInPlay);
 	}
 	
+	//returns the current bet size
 	public int getBetSize() {
 		return betSize;
 	}
 	
+	//returns the starting bet
 	public int getStartingBet() {
 		return startingBet;
 	}
 	
+	//returns the starting money value
 	public int getStartingMoney() {
 		return startingMoney;
 	}
 	
+	//sets the bet size
+	//receives and int
 	public void setBetSize(int bet) {
 		betSize = bet;
 	}
@@ -84,6 +89,8 @@ public class Strats {
 		cardGame.setBet(betSize);
 	}
 	
+	//finds the current weight of the deck and updates currweight
+	//to that value
 	private void findWeightedDeck() {
 		//when deck is reshuffled the point system is reset
 		int holder = 0;
@@ -147,6 +154,7 @@ public class Strats {
 			System.out.println("Congrats!! You finished " + amountOfRounds + " rounds and ended up with $" + cardGame.getMoney());
 		}
 	}
+	
 	//this is that super basic strat that you see everywhere with the chart
 	//no card counting required just basic memorization
 	//takes an integer of how many rounds you want to go until,
