@@ -12,12 +12,13 @@ public class JackBlackPlayer {
 	private boolean playsGame;
 	private int money;
 	private int bet;
-	private int handTotal;
-	private int altHandTotal;
+	public int handTotal;
+	public int altHandTotal;
+	public boolean userAce;
 	private int endDealerTotal;
 	private int endUserTotal;
 	private int deckSize;
-	boolean isUser;
+	final boolean IS_USER = true;
 	
 	
 	//Initializes the game of blackJack
@@ -28,7 +29,6 @@ public class JackBlackPlayer {
 		handTotal = 0;
 		//TODO: figure out best way to ask user for deckSize
 		deckSize = 1;
-		isUser = true;
 		altHandTotal = 0;
 		bet = startingBet;
 		endDealerTotal = 0;
@@ -58,6 +58,9 @@ public class JackBlackPlayer {
 		dealerHand.clear();
 	}
 	
+	public int getBet() {
+		return bet;
+	}
 	//returns the amount of money the user has left
 	public int getMoney() {
 		return money;
@@ -66,10 +69,7 @@ public class JackBlackPlayer {
 	//shows the dealers second card so the player can bet accordingly
 	//returns an int(this is for the computer to read)
 	public int getDealerCardInt() {
-		if(!dealerHand.isEmpty()) {
-			return dealerHand.get(1);
-		}
-		return null;
+		return dealerHand.get(1);
 	}
 	//shows the dealers second card so the player can bet accordingly
 	//returns a string for the user to look at
@@ -197,7 +197,7 @@ public class JackBlackPlayer {
 	//returns the a string of current hand
 	//Accepts a list of numbers from 2-14
 	//with 11-14 representing face Cards
-	public String getCurrHand(List<Integer> list) {
+	private String getCurrHand(List<Integer> list) {
 		String holder = "";
 		for(int i = 0; i < list.size(); i++) {
 			int curr = list.get(i);
@@ -216,6 +216,10 @@ public class JackBlackPlayer {
 			}
 		}
 		return holder;
+	}
+	
+	public List<Integer> getUserHand() {
+		return currHand;
 	}
 	
 	//sets the users hand total and Alt hand total
@@ -239,27 +243,32 @@ public class JackBlackPlayer {
 		if(altHandTotal > 21) {
 			altHandTotal = handTotal;
 		}
+		if(altHandTotal != handTotal) {
+			userAce = true;
+		}
 		
 	}
 	//prints the current total of your hand
-	public void printTotal() {
+	public int printTotal() {
 		System.out.println("Your current total is: ");
 		if(handTotal > 21) {
 			System.out.println(handTotal + "(Bust)");
 		}
 		if(altHandTotal == 21 || handTotal == 21) {
 			System.out.println("21");
+			return 21;
 		} else if(altHandTotal != handTotal) {
 			System.out.println("Either: " + handTotal + " or: " + altHandTotal);
 		} else {
 			System.out.println(handTotal);
 		}
+		return handTotal;
 	}
 	public void startingHand() {
-		hit(isUser);
-		hit(!isUser);
-		hit(isUser);
-		hit(!isUser);
+		hit(IS_USER);
+		hit(!IS_USER);
+		hit(IS_USER);
+		hit(!IS_USER);
 	}
 	
 	//user should never know the dealers total
@@ -288,6 +297,7 @@ public class JackBlackPlayer {
 	//sets the user total at the end of the game
 	//based off the current user total and alt total
 	private void setEndUserTotal() {
+		setTotal();
 		if(altHandTotal > 21) {
 			endUserTotal = handTotal;
 		} else if(handTotal < altHandTotal){
@@ -300,7 +310,7 @@ public class JackBlackPlayer {
 	//unless it busts the hand
 	private void dealerHit() {
 		while(dealerTotal() < 17) {
-			hit(!isUser);
+			hit(!IS_USER);
 		}
 		endDealerTotal = dealerTotal();
 	}
@@ -321,6 +331,8 @@ public class JackBlackPlayer {
 	
 	//prints if the dealer won or the user
 	public void whoWon() {
+		setEndUserTotal();
+		dealerHit();
 		int compared = compareUser();
 		if(compared > 0) {
 			System.out.println("You won!");
@@ -331,7 +343,8 @@ public class JackBlackPlayer {
 			System.out.println("You lost.");
 			money -= bet;
 		}
-		System.out.println("the dealer had: " + getCurrHand(dealerHand));
+		System.out.println("You had: " + getCurrHand(currHand) + "= " + printTotal()); 
+		System.out.println("the dealer had: " + getCurrHand(dealerHand) + "= " + dealerTotal());
 	}
 	
 	//for if the user is playing a single game	
@@ -349,7 +362,7 @@ public class JackBlackPlayer {
 			if(answer.equalsIgnoreCase("n")) {
 				break;
 			}
-			hit(isUser);
+			hit(IS_USER);
 			setTotal();
 			System.out.println("Your current cards are: ");
 			System.out.println(getCurrHand(currHand));
