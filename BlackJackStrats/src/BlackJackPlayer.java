@@ -2,7 +2,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 //TODO: prevent player from going negitive in money
-public class JackBlackPlayer {
+public class BlackJackPlayer {
 	
 	private List<Integer> currHand;
 	private List<Integer> dealerHand;
@@ -19,16 +19,18 @@ public class JackBlackPlayer {
 	private int endUserTotal;
 	private int deckSize;
 	final boolean IS_USER = true;
+	private boolean deckShuffled;
+	private boolean endRound;
 	
 	
 	//Initializes the game of blackJack
 	//Pass in an integer of how much money the user 
 	//will start with
-	public JackBlackPlayer(int startingAmount, int startingBet) {
+	public BlackJackPlayer(int startingAmount, int startingBet, int deckSizeSet) {
 		money = startingAmount;
 		handTotal = 0;
 		//TODO: figure out best way to ask user for deckSize
-		deckSize = 1;
+		deckSize = deckSizeSet;
 		altHandTotal = 0;
 		bet = startingBet;
 		endDealerTotal = 0;
@@ -38,6 +40,8 @@ public class JackBlackPlayer {
 		cardsPlayed = new ArrayList<Integer>();
 		myScanner = new Scanner(System.in);
 		shuffleType = this.shuffleType();
+		deckShuffled = false;
+		endRound = false;
 		this.setPlaysGame();
 	}
 	
@@ -56,6 +60,7 @@ public class JackBlackPlayer {
 	public void newGame() {
 		currHand.clear();
 		dealerHand.clear();
+		endRound = false;
 	}
 	
 	public int getBet() {
@@ -66,11 +71,30 @@ public class JackBlackPlayer {
 		return money;
 	}
 	
+	public boolean getDeckShuffled() {
+		return deckShuffled;
+	}
 	//shows the dealers second card so the player can bet accordingly
 	//returns an int(this is for the computer to read)
 	public int getDealerCardInt() {
 		return dealerHand.get(1);
 	}
+	
+	//if the round is over returns a list of the dealers hand
+	//otherwise returns null
+	public List<Integer> getDealerHand(){
+		if(endRound) {
+			return dealerHand;
+		}
+		System.out.println("please wait until the end of round to see the dealers hand.");
+		return null;
+	}
+	
+	//returns a list of the players hand
+	public List<Integer> getPlayerHand(){
+		return currHand;
+	}
+	
 	//shows the dealers second card so the player can bet accordingly
 	//returns a string for the user to look at
 	public String getDealerCardStr() {
@@ -125,6 +149,8 @@ public class JackBlackPlayer {
 	}
 	//simulates a deck that is perfectly shuffled every hand i.e true randomness
 	private int autoShuffle() {
+		//always a new deck
+		deckShuffled = true;
 		int min = 2;
 		//Jack = 11, Queen = 12, King = 13, Ace = 14
 		int max = 14;
@@ -135,7 +161,6 @@ public class JackBlackPlayer {
 	
 	//Simulates a deck that is shuffled then played until no cards are left then shuffled
 	private int shuffledDeck() {
-		
 		int min = 0;
 		//creates a possible card from 0 to the deck max
 		int max = 51 * deckSize;
@@ -143,6 +168,9 @@ public class JackBlackPlayer {
 		//"shuffles" the deck after all cards have been picked
 		if(!cardsPlayed.isEmpty() && cardsPlayed.size() == 52) {
 			cardsPlayed.clear();
+			deckShuffled = true;
+		} else {
+			deckShuffled = false;
 		}
 		//keeps running until it gets a randomNumb that hasn't been played
 		while(!cardsPlayed.isEmpty() && cardsPlayed.contains(randomNumb)) {
@@ -164,6 +192,9 @@ public class JackBlackPlayer {
 		//if so it removes all cardsPlayed making all hands possible agian
 		if(!cardsPlayed.isEmpty() && currHand.isEmpty()) {
 			cardsPlayed.clear();
+			deckShuffled = true;
+		} else {
+			deckShuffled = false;
 		}
 		//keeps running until it gets a randomNumb that hasn't been played
 		while(!cardsPlayed.isEmpty() && cardsPlayed.contains(randomNumb)) {
@@ -345,6 +376,7 @@ public class JackBlackPlayer {
 		}
 		System.out.println("You had: " + getCurrHand(currHand) + "= " + printTotal()); 
 		System.out.println("the dealer had: " + getCurrHand(dealerHand) + "= " + dealerTotal());
+		endRound = true;
 	}
 	
 	//for if the user is playing a single game	
