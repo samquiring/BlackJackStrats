@@ -1,5 +1,5 @@
 # BlackJackStrats
-This program explores the effectiveness of multiple well know strategies in BlackJack through programing them into java
+This program explores the effectiveness of multiple well know strategies in BlackJack.
 
 What it does:
  The first thing that this program offers is a black jack player which is programed to do the basics of blackjack and either
